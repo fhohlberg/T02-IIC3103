@@ -23,13 +23,17 @@ class IngredientesController < ApplicationController
 
   # POST /ingredientes
   def create
-    @ingrediente = Ingrediente.new(ingrediente_params)
-    if @ingrediente.save
-      @ingrediente.path = ( "https://tarea2-fh-iic3103.herokuapp.com/ingrediente/" + @ingrediente.id.to_s())
-      @ingrediente.save()
-      render json: @ingrediente.as_json(except: ["created_at", "updated_at", "path"]), status: 201
-    else
+    if Ingrediente.find_by(id: params[:id])
       render json: {"status": 400, "error": "Input invalido"}, status: 400
+    else
+      @ingrediente = Ingrediente.new(ingrediente_params)
+      if @ingrediente.save
+        @ingrediente.path = ( "https://tarea2-fh-iic3103.herokuapp.com/ingrediente/" + @ingrediente.id.to_s())
+        @ingrediente.save()
+        render json: @ingrediente.as_json(except: ["created_at", "updated_at", "path"]), status: 201
+      else
+        render json: {"status": 400, "error": "Input invalido"}, status: 400
+      end
     end
   end
 
